@@ -24,14 +24,14 @@ class VideoRoomPlugin extends MediaPlugin {
     this.joinInfo = info;
 
     return this.getUserMedia(constraints)
-      .then(stream => {
+      .then((stream) => {
         this.createPeerConnection({});
         //@ts-ignore
-        stream.getTracks().forEach(track => this.addTrack(track, stream));
+        stream.getTracks().forEach((track) => this.addTrack(track, stream));
       })
       .then(() => this.createOffer({}))
-      .then(jsep => this.configure(JANUS_VIDEOROOM_OPTIONS, jsep))
-      .then(resp => {
+      .then((jsep) => this.configure(JANUS_VIDEOROOM_OPTIONS, jsep))
+      .then((resp) => {
         const jsep = resp.get('jsep');
         if (jsep) {
           this.setRemoteSDP(jsep);
@@ -66,14 +66,15 @@ class VideoRoomPlugin extends MediaPlugin {
     return this.sendWithTransaction({
       janus: 'message',
       body: { request: 'unpublish' },
-    }).then(response => {
+    }).then((response) => {
       this.closePeerConnection();
+      this.cleanup();
       return response;
     });
   }
 
   processIncomeMessage(message: JanusMessage) {
-    return super.processIncomeMessage(message).then(result => {
+    return super.processIncomeMessage(message).then((result) => {
       if (!message.getPlainMessage()) {
         return;
       }
